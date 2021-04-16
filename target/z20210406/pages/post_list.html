@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="../vuejs/vuejs-2.5.16.js"></script>
+    <script type="text/javascript" src="../vuejs/axios-0.18.0.js"></script>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+    <script type="text/javascript" s1rc="../layui/layui.js"></script>
+    <script type="text/javascript" src="../jquery/jquery-1.11.3.min.js"></script>
+
+    <!-- 这是样式 -->
+    <link href="../css/style.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="../csstree/zTreeStyle.css" type="text/css">
+
+    <!-- tree.js 树的js文件，jquery不能删，jquery和tree的结合的 -->
+    <script type="text/javascript" src="../js/tree.js"></script>
+    <script type="text/javascript" src="../js/jquery-1.8.2.js"></script>
+    <script type="text/javascript" src="../js/jquery.ztree.all-3.3.js"></script>
+</head>
+<body>
+    <div id="postdiv">
+        <div id="postlistdiv">
+            <table class="layui-table" border="1" rules="all" align="center">
+                <tr>
+                    <td colspan="100">
+                        按照名称：<input type="text" v-model="searchEntity.postname"/>
+                        <input type="button" value="检索" @click="getPostListConn()">
+                    </td>
+                </tr>
+                <tr bgcolor="#d2691e" align="center">
+                    <th>编号</th>
+                    <th>名称</th>
+                    <th>描述</th>
+                    <th colspan="100">操作</th>
+                </tr>
+                <tr v-for="p in postlist">
+                    <td>{{p.id}}</td>
+                    <td>{{p.postname}}</td>
+                    <td>{{p.postdesc}}</td>
+                    <td>删除</td>
+                    <td>
+                        <button @click="toPostMeun(p.id)">分配权限</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="100">
+                        当前{{page.currentPage}}/{{page.pageCount}}页;
+                        <button @click="paging(1)">首页</button>
+                        <button @click="paging(page.previousPage)">上一页</button>
+                        <button @click="paging(page.nextPage)">下一页</button>
+                        <button @click="paging(page.pageCount)">尾页</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="nodes" style="display: none">
+        <ul id="treeClass" class="ztree"></ul>
+        <button onclick="savePostMeun()">保存</button>
+    </div>
+</body>
+
+<script type="text/javascript">
+    var postid = 1;
+    var setting={
+        view:{
+            showLine:true//是否显示线，默认为true
+        },
+        data:{
+            key:{
+                name:"mname"
+            },
+            simpleData:{
+                enable:true,//开启树的层级结构
+                idKey:"id",//设置树节点id，节点参数id必须与之相匹配，即在Actiob中穿过来的值必须与之相对应
+                pIdKey:"pid"//设置pid，节点参数pid必须与之相匹配
+            }
+        },
+        check:{
+            enable:true//复选框是否开启
+        },
+        callback:{
+            onClick:zTreeClick
+        }
+    };
+    var currentSelectedNode;
+    function zTreeClick(event, treeId, treeNode) {
+        var treeObj = $.fn.zTree.getZTreeObj("treeClass");
+        currentSelectedNode = treeObj.getNodeByTId(treeNode.tId);
+        var path =currentSelectedNode.url;
+        parent.frames[3].location.href = path;
+    };
+    //就绪函数
+    function testaa(obj,id) {
+        postid = id;
+        $.fn.zTree.init($("#treeClass"),setting,obj);
+    }
+</script>
+
+<script>
+    function savePostMeun() {
+        var treeObj = $.fn.zTree.getZTreeObj("treeClass");
+        var nodes = treeObj.getCheckedNodes(true);
+        var ids = [];
+        for(var x=0;x<nodes.length;x++){
+            ids.push(nodes[x].id);
+        }
+        vm1.savePostMeun(postid,ids);
+    }
+</script>
+<script type="text/javascript" src="../myjs/post_list.js"></script>
+</html>

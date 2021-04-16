@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="com.pojo.UserBean">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="uname" jdbcType="VARCHAR" property="uname" />
+    <result column="pwd" jdbcType="VARCHAR" property="pwd" />
+    <result column="age" jdbcType="INTEGER" property="age" />
+    <result column="birthday" jdbcType="DATE" property="birthday" />
+    <result column="telphone" jdbcType="VARCHAR" property="telphone" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="gender" jdbcType="VARCHAR" property="gender" />
+    <result column="pwdsalt" jdbcType="VARCHAR" property="pwdsalt" />
+  </resultMap>
+  <select id="getUserMeunListById" resultType="MeunBean">
+    select d.* from tb_user_post a
+    left join tb_post b on a.postid=b.id
+    left join tb_post_meun c on b.id = c.postid
+    left join tb_meun d on c.meunid = d.id
+    where d.isbutton= 0
+    and a.ismain = 1
+    and a.userid=#{userid}
+  </select>
+
+  <select id="getUserMeunUrlsById" resultType="string">
+    select d.url from tb_user_post a
+    left join tb_post b on a.postid=b.id
+    left join tb_post_meun c on b.id = c.postid
+    left join tb_meun d on c.meunid = d.id
+    where  a.userid=#{userid}
+  </select>
+
+  <select id="getLongin" resultType="UserBean">
+        select * from tb_user where accountname=#{uname} or telphone=#{uname}
+  </select>
+  <insert id="saveUserPost">
+    insert into tb_user_post(userid,postid) values(#{userid},#{postid})
+  </insert>
+  <select id="getUserDeptById" resultType="DeptBean">
+    select b.* from tb_user_dept a left join
+    tb_dept b on a.deptid = b.id
+    where a.userid = #{id}
+  </select>
+  <select id="getUserDeptidsById" resultType="long">
+    select deptid from tb_user_dept where userid=#{id}
+  </select>
+
+  <delete id="deleteUserPostById">
+    delete from tb_user_post where userid=#{id}
+  </delete>
+  <delete id="deleteUserDeptById">
+    delete from tb_user_dept where userid=#{id}
+  </delete>
+
+  <insert id="insertUserDept">
+    insert into tb_user_dept(userid,deptid) values(#{userid},#{deptid})
+  </insert>
+
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, uname, pwd, age, birthday, telphone, address, gender, pwdsalt
+  </sql>
+  <select id="selectByExample" parameterType="com.pojo.UserBeanExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from tb_user
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_user
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tb_user
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.pojo.UserBeanExample">
+    delete from tb_user
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.pojo.UserBean">
+    insert into tb_user (id, uname, pwd, 
+      age, birthday, telphone, 
+      address, gender, pwdsalt
+      )
+    values (#{id,jdbcType=BIGINT}, #{uname,jdbcType=VARCHAR}, #{pwd,jdbcType=VARCHAR}, 
+      #{age,jdbcType=INTEGER}, #{birthday,jdbcType=DATE}, #{telphone,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{gender,jdbcType=VARCHAR}, #{pwdsalt,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.pojo.UserBean">
+    insert into tb_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="uname != null">
+        uname,
+      </if>
+      <if test="pwd != null">
+        pwd,
+      </if>
+      <if test="age != null">
+        age,
+      </if>
+      <if test="birthday != null">
+        birthday,
+      </if>
+      <if test="telphone != null">
+        telphone,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="gender != null">
+        gender,
+      </if>
+      <if test="pwdsalt != null">
+        pwdsalt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="uname != null">
+        #{uname,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null">
+        #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null">
+        #{age,jdbcType=INTEGER},
+      </if>
+      <if test="birthday != null">
+        #{birthday,jdbcType=DATE},
+      </if>
+      <if test="telphone != null">
+        #{telphone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="pwdsalt != null">
+        #{pwdsalt,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.pojo.UserBeanExample" resultType="java.lang.Long">
+    select count(*) from tb_user
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update tb_user
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.uname != null">
+        uname = #{record.uname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pwd != null">
+        pwd = #{record.pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="record.age != null">
+        age = #{record.age,jdbcType=INTEGER},
+      </if>
+      <if test="record.birthday != null">
+        birthday = #{record.birthday,jdbcType=DATE},
+      </if>
+      <if test="record.telphone != null">
+        telphone = #{record.telphone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.address != null">
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gender != null">
+        gender = #{record.gender,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pwdsalt != null">
+        pwdsalt = #{record.pwdsalt,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update tb_user
+    set id = #{record.id,jdbcType=BIGINT},
+      uname = #{record.uname,jdbcType=VARCHAR},
+      pwd = #{record.pwd,jdbcType=VARCHAR},
+      age = #{record.age,jdbcType=INTEGER},
+      birthday = #{record.birthday,jdbcType=DATE},
+      telphone = #{record.telphone,jdbcType=VARCHAR},
+      address = #{record.address,jdbcType=VARCHAR},
+      gender = #{record.gender,jdbcType=VARCHAR},
+      pwdsalt = #{record.pwdsalt,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pojo.UserBean">
+    update tb_user
+    <set>
+      <if test="uname != null">
+        uname = #{uname,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null">
+        pwd = #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null">
+        age = #{age,jdbcType=INTEGER},
+      </if>
+      <if test="birthday != null">
+        birthday = #{birthday,jdbcType=DATE},
+      </if>
+      <if test="telphone != null">
+        telphone = #{telphone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        gender = #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="pwdsalt != null">
+        pwdsalt = #{pwdsalt,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pojo.UserBean">
+    update tb_user
+    set uname = #{uname,jdbcType=VARCHAR},
+      pwd = #{pwd,jdbcType=VARCHAR},
+      age = #{age,jdbcType=INTEGER},
+      birthday = #{birthday,jdbcType=DATE},
+      telphone = #{telphone,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      gender = #{gender,jdbcType=VARCHAR},
+      pwdsalt = #{pwdsalt,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+		  http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+  <!--乱码处理-->
+  <filter>
+    <filter-name>characterEncodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+    <init-param>
+      <param-name>forceEncoding</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>characterEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <!--springMVC的核心控制器-->
+  <servlet>
+    <servlet-name>spring-mvc</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>classpath*:spring-mvc.xml</param-value>
+    </init-param>
+    <!--因为springMVC是一个servlet，servlet初始化：默认是第一次被访问的时候，初始化的，
+    但是我们的springMVC必须在项目启动的时候，就要启动起来，所以这个servler就必须是项目启动的时候进行初始化
+    load-on-startup默认是-1表示第一次被访问初始化，配置成0或者大于0的数值，就是项目启动的时候就初始化了，
+    相当于和filter的生命周期一样了
+    -->
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>spring-mvc</servlet-name>
+    <url-pattern>*.do</url-pattern>
+  </servlet-mapping>
+
+  <!--spring上下文-->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:applicationContext.xml</param-value>
+  </context-param>
+
+  <!--spring的监听器-->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+
+ <!-- <filter>
+    <filter-name>MyFilter</filter-name>
+    <filter-class>com.filter.MyFilter</filter-class>
+    &lt;!&ndash;这个初始化参数怎么读取&ndash;&gt;
+    <init-param>
+      <param-name>notCheckUrl</param-name>
+      <param-value>/user/getLogin.do</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>MyFilter</filter-name>
+    <url-pattern>*.do</url-pattern>
+  </filter-mapping>-->
+</web-app>

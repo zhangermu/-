@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <!-- 这是样式 -->
+    <link href="../css/style.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="../csstree/zTreeStyle.css" type="text/css">
+
+    <!-- tree.js 树的js文件，jquery不能删，jquery和tree的结合的 -->
+    <script type="text/javascript" src="../js/tree.js"></script>
+    <script type="text/javascript" src="../js/jquery-1.8.2.js"></script>
+    <script type="text/javascript" src="../js/jquery.ztree.all-3.3.js"></script>
+
+</head>
+<script type="text/javascript">
+    var setting={
+        view:{
+            showLine:true//是否显示线，默认为true
+        },
+        data:{
+            key:{
+                name:"mname"
+            },
+            simpleData:{
+                enable:true,//开启树的层级结构
+                idKey:"id",//设置树节点id，节点参数id必须与之相匹配，即在Actiob中穿过来的值必须与之相对应
+                pIdKey:"pid"//设置pid，节点参数pid必须与之相匹配
+            }
+        },
+        check:{
+            //enable:true//复选框是否开启
+        },
+        callback:{
+            onClick:zTreeClick
+        }
+    };
+    var currentSelectedNode;
+    function zTreeClick(event, treeId, treeNode) {
+        var treeObj = $.fn.zTree.getZTreeObj("treeClass");
+        currentSelectedNode = treeObj.getNodeByTId(treeNode.tId);
+        var path =currentSelectedNode.url;
+        parent.frames[3].location.href = path;
+    };
+    //就绪函数
+    $(document).ready(function(){
+        $.get(
+            "../user/getMeunList.do",
+            function (response) {
+                $.fn.zTree.init($("#treeClass"),setting,response);
+            }
+        );
+    });
+</script>
+<body>
+    <div id="nodes">
+         <ul id="treeClass" class="ztree"></ul>
+    </div>
+</body>
+<script>
+    function getIds() {
+        var treeObj = $.fn.zTree.getZTreeObj("treeClass");
+        var nodes = treeObj.getCheckedNodes(true);
+        for(var x=0;x<nodes.length;x++){
+            alert(nodes[x].id);
+        }
+    }
+</script>
+</html>

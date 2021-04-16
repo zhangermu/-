@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="../vuejs/vuejs-2.5.16.js"></script>
+    <script type="text/javascript" src="../vuejs/axios-0.18.0.js"></script>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+    <script type="text/javascript" s1rc="../layui/layui.js"></script>
+    <script type="text/javascript" src="../jquery/jquery-1.11.3.min.js"></script>
+</head>
+<body>
+    <div id="userdiv">
+        <div id="userlistdiv">
+            <table class="layui-table" align="center" border="1" rules="all">
+                <tr align="center" bgcolor="#00ffff">
+                    <th>编码</th>
+                    <th>姓名</th>
+                    <th>年龄</th>
+                    <th>性别</th>
+                    <th>生日</th>
+                    <th>手机号</th>
+                    <th>地址</th>
+                    <th>科室</th>
+                    <th>职位</th>
+                    <th>操作</th>
+                </tr>
+                <tr v-for="u in userlist">
+                    <td>{{u.id}}</td>
+                    <td>{{u.uname}}</td>
+                    <td>{{u.age}}</td>
+                    <td>{{u.gender}}</td>
+                    <td>{{u.birthday}}</td>
+                    <td>{{u.telphone}}</td>
+                    <td>{{u.address}}</td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <button @click="toUserDept(u.id)">选择科室</button>
+                        <button @click="toUserPost(u.id)">分配职位</button>
+                        <button>查看菜单</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="userdeptdiv" style="display: none">
+                <table class="layui-table" align="center" border="1">
+                    <tr>
+                        <td colspan="100">
+                            <h1>目前在给{{entity.uname}}分配部门</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>部门</td>
+                        <td>
+                            <span v-for="d in dlist">
+                                <input type="checkbox"  v-model="deptids" :value="d.id"/>{{d.deptname}}<br/>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="100">
+                            <button @click="saveUserDept()">保存</button>
+                        </td>
+                    </tr>
+                </table>
+        </div>
+        <!--是给用户分配职位的-->
+        <div id="userpostdiv" style="display: none">
+            <table align="center" border="1" rules="all">
+                <tr align="center">
+                    <td colspan="100">
+                        <h1>目前正在给--{{entity.uname}}--分配职位</h1>
+                    </td>
+                </tr>
+                <tr v-if="dlist.length==0">
+                    <td colspan="100">
+                        该用户目前还没有科室，请先选择科室
+                    </td>
+                </tr>
+                <tr v-for="d in dlist">
+                    <td>{{d.deptname}}</td>
+                    <td>
+                        <span v-for="p in d.plist">
+                            <input type="checkbox" v-model="d.postids" v-bind:value="p.id"/>{{p.postname}}<br>
+                        </span>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td colspan="100">
+                        <button @click="saveUserPost()">保存</button>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../myjs/user_list.js"></script>
+</html>
